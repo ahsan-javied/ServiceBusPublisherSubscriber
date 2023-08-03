@@ -1,11 +1,12 @@
 ﻿using System.Data;
 using DAL.DataModels;
+using DAL.DB;
 
 namespace DAL.Repository
 {
     public class NotificationRepository : GenericRepository<Notification>, INotificationRepository
     {
-        public NotificationRepository(IDbConnection dbConnection) : base(dbConnection)
+        public NotificationRepository(DbConnectionFactory dbConnection) : base(dbConnection)
         {
         }
 

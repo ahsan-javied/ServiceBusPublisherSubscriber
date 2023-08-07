@@ -16,7 +16,8 @@ namespace DAL.Repository
         {
             using var dbConnection = dbConnectionFactory.CreateConnection();
             dbConnection.Open();
-            await Task.Delay(TimeSpan.FromSeconds(30)); // Delay for 30 seconds
+            //Note: Uncomment below line for testing only
+            //await Task.Delay(TimeSpan.FromSeconds(30)); // Delay for 30 seconds
             return await dbConnection.QueryAsync<T>(sql, data);
         }
 

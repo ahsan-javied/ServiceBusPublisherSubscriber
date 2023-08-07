@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SBTopicSubscriber", "SBTopicSubscriber\SBTopicSubscriber.csproj", "{E980241D-6220-4959-9D10-6A54F601D23D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SBDLQProcessor", "SBDLQProcessor\SBDLQProcessor.csproj", "{7179A67E-A6B4-475C-8A10-2032FA9DB2CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{E980241D-6220-4959-9D10-6A54F601D23D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E980241D-6220-4959-9D10-6A54F601D23D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E980241D-6220-4959-9D10-6A54F601D23D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7179A67E-A6B4-475C-8A10-2032FA9DB2CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7179A67E-A6B4-475C-8A10-2032FA9DB2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7179A67E-A6B4-475C-8A10-2032FA9DB2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7179A67E-A6B4-475C-8A10-2032FA9DB2CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{08844853-F07E-4293-A766-5DC0E1D450CA} = {EF45CDE2-12AD-4A26-9B95-8FA939BB2490}
 		{E980241D-6220-4959-9D10-6A54F601D23D} = {EF45CDE2-12AD-4A26-9B95-8FA939BB2490}
+		{7179A67E-A6B4-475C-8A10-2032FA9DB2CA} = {EF45CDE2-12AD-4A26-9B95-8FA939BB2490}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A218F2ED-0162-4C0B-B7D9-5AE9FA91309F}

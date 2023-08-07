@@ -1,25 +1,40 @@
 ﻿using Azure.Messaging.ServiceBus;
 using DAL.DataModels;
-using Grpc.Core;
+using Microsoft.Extensions.Configuration;
 using System.Text;
 using Utils.Enums;
-using Utils.Helpers;
 
-namespace SendMessageToSBTopic
+namespace Services.ServiceBus
 {
     public class ServiceBusMessageSender
     {
+        public ServiceBusMessageSender(IConfiguration config) 
+        {
+            Initialize(config);
+        }
+
+        private void Initialize(IConfiguration config)
+        {
+            sbConnectionString = config.GetSection("Values:SBConnectionString").Value ?? "";
+            topicName = config.GetSection("Values:SBTopicName").Value ?? "";
+            var subscriptionsName = config.GetSection("Values:SBTopicSubscriptions").Value ?? "";
+            Subscriptions = subscriptionsName?.Split(",") ?? Array.Empty<string>();
+            int.TryParse(config.GetSection("Values:SBMaxNumOfMessages").Value, out numOfMessages);
+        }
+
         // the client that owns the connection and can be used to create senders and receivers
         private static ServiceBusClient client;
         // the sender used to publish messages to the topic
         private static ServiceBusSender sender;
-        // name of the Service Bus topic
-        static readonly string topicName = "topicmessage";
         // connection string of the Service Bus
-        static readonly string connectionString = "Endpoint=sb://mywork-messaging.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=qb7JPpE4Vz+Wfhh94nigrz593ePr/co7f+ASbADl92A=";
-        
+        private static string sbConnectionString;
+        // name of the Service Bus topic
+        private static string topicName;
         // names of subscriptions to the topic
-        static readonly string[] Subscriptions = { "S1", "S2", "S3" };
+        private static string[] Subscriptions;
+        // number of messages to be sent to the topic
+        private static int numOfMessages;
+
         static readonly IDictionary<string, string[]> SubscriptionFilters = new Dictionary<string, string[]> {
             { "S1", new[] { "StoreId IN('Store1', 'Store2', 'Store3')", "StoreId = 'Store4'"} },
             { "S2", new[] { "sys.To IN ('Store5','Store6','Store7') OR StoreId = 'Store8'" } },
@@ -36,22 +51,20 @@ namespace SendMessageToSBTopic
         //static string CustomField = "StoreId";
         static readonly int NrOfMessagesPerStore = 1; // Send at least 1.
 
-        // number of messages to be sent to the topic
-        const int numOfMessages = 3;
-
+        
         // The Service Bus client types are safe to cache and use as a singleton for the lifetime
         // of the application, which is best practice when messages are being published or read
         // regularly.
 
-        public static async Task SendBatchMessagesAsync(List<Notification> notifications)
+        public async Task SendBatchMessagesAsync(List<Notification> notifications)
         {
             try
             {
-                client = new ServiceBusClient(connectionString);
+                client = new ServiceBusClient(sbConnectionString);
                 sender = client.CreateSender(topicName);
 
                 // create a batch 
-                List<List<Notification>> batches = ListHelper.SplitIntoBatches(notifications, numOfMessages);
+                List<List<Notification>> batches = new List<List<Notification>>(); // ListHelper.SplitIntoBatches(notifications, numOfMessages);
             
                 foreach (var batch in batches)
                 {

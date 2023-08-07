@@ -17,11 +17,10 @@ namespace SBTopicSubscriber
             _logger = loggerFactory.CreateLogger<S1Subscriber>();
             notificationService = noteService;
         }
-
         //1. Default(Boolean) Filter: Default = true
         [Function("AllMessageSubscriber")]
-        public async Task Run(
-            [ServiceBusTrigger("topicmessage", "S1", Connection = "SBTopicConnectionString")] string mySbMsg,
+        public async Task RunAsync(
+            [ServiceBusTrigger(topicName: "%SBTopicName%", subscriptionName: "%SBTopicSubscriptionName1%", Connection = "SBConnectionString")] string mySbMsg,
             Int32 deliveryCount,
             DateTime enqueuedTimeUtc,
             string messageId
@@ -29,12 +28,12 @@ namespace SBTopicSubscriber
         {
             _logger.LogInformation($"START:AllMessageSubscriber {DateTime.UtcNow}");
             _logger.LogInformation($"processed message: {mySbMsg}");
-
+            
             try
             {
                 var notice = new Notification().ToClassObj(mySbMsg);
 
-                if (notice.Id > 0)
+                if (notice?.Id > 0)
                 {
                     notice.IsRead = true;
                     notice.ReadDT = DateTime.UtcNow;

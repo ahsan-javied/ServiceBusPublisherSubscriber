@@ -20,8 +20,8 @@ namespace SBTopicSubscriber
 
         //3. Correlation Filter
         [Function("OtherMessageSubscriber")]
-        public async Task Run(
-            [ServiceBusTrigger("topicmessage", "S3", Connection = "SBTopicConnectionString")] string mySbMsg,
+        public async Task RunAsync(
+            [ServiceBusTrigger(topicName: "%SBTopicName%", subscriptionName: "%SBTopicSubscriptionName3%", Connection = "SBConnectionString")] string mySbMsg,
             Int32 deliveryCount,
             DateTime enqueuedTimeUtc,
             string messageId
@@ -34,7 +34,7 @@ namespace SBTopicSubscriber
             {
                 var notice = new Notification().ToClassObj(mySbMsg);
 
-                if (notice.Id > 0)
+                if (notice?.Id > 0)
                 {
                     notice.IsRead = true;
                     notice.ReadDT = DateTime.UtcNow;

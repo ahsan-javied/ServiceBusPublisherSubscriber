@@ -17,7 +17,7 @@ var host = new HostBuilder()
     {
         string connectionString = hostContext.Configuration.GetConnectionString("SqlConnectionString");
         //services.AddSingleton<IDbConnection>(provider => new SqlConnection(connectionString));
-        services.AddSingleton(new ServiceBusMessageSender(hostContext.Configuration));
+        services.AddSingleton(new ServiceBusMessageReceiver(hostContext.Configuration));
         services.AddSingleton(new DbConnectionFactory(connectionString));
         services.AddScoped<NotificationService>(); // Register the class directly without an interface
         services.AddScoped<INotificationRepository, NotificationRepository>();

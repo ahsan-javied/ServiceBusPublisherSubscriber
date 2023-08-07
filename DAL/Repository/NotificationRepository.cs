@@ -12,7 +12,9 @@ namespace DAL.Repository
 
         public async Task<List<Notification>> GetAllNotifications(Notification notification)
         {
-            string sql = "SELECT * FROM Notifications where IsDelivered = @IsDelivered AND PickAndLock = @PickAndLock";
+            string sql = "SELECT TOP 10 * FROM Notifications " +
+                "where IsDelivered = @IsDelivered AND PickAndLock = @PickAndLock " +
+                "Order By 1 ASC";
 
             return (List<Notification>)await GetAllByParms(sql, notification);
         }

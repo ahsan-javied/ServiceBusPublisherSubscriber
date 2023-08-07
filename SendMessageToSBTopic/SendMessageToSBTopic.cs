@@ -1,7 +1,10 @@
 using DAL.DataModels;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Services;
+using Services.ServiceBus;
+using Utils.Settings;
 
 namespace SendMessageToSBTopic
 {
@@ -9,17 +12,20 @@ namespace SendMessageToSBTopic
     {
         private readonly ILogger _logger;
         private readonly NotificationService notificationService;
-
+        private readonly ServiceBusMessageSender serviceBusMessageSender;
+        
         public SendMessageToSBTopic(
             ILoggerFactory loggerFactory, 
-            NotificationService noteService)
+            NotificationService noteService,
+            ServiceBusMessageSender sbMessageSender)
         {
             _logger = loggerFactory.CreateLogger<SendMessageToSBTopic>();
             notificationService = noteService;
+            serviceBusMessageSender = sbMessageSender;
         }
 
         [Function("SendMessageToSBTopic")]
-        public async Task Run([TimerTrigger("0 */1 * * * *")] MyInfo myTimer)
+        public async Task RunAsync([TimerTrigger("0 */1 * * * *")] TimeTriggerInfo myTimer)
         {
             _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.UtcNow}");
 
@@ -40,7 +46,7 @@ namespace SendMessageToSBTopic
 
                 await notificationService.BulkUpdateNotification(notifications);
 
-                await ServiceBusMessageSender.SendBatchMessagesAsync(notifications);
+                await serviceBusMessageSender.SendBatchMessagesAsync(notifications);
 
                 notifications.
                     ForEach(msg => { 
@@ -53,21 +59,5 @@ namespace SendMessageToSBTopic
 
             _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
         }
-    }
-
-    public class MyInfo
-    {
-        public MyScheduleStatus ScheduleStatus { get; set; }
-
-        public bool IsPastDue { get; set; }
-    }
-
-    public class MyScheduleStatus
-    {
-        public DateTime Last { get; set; }
-
-        public DateTime Next { get; set; }
-
-        public DateTime LastUpdated { get; set; }
     }
 }

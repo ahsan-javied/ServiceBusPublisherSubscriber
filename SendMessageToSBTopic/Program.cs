@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Services;
 using DAL.DB;
+using Services.ServiceBus;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -16,6 +17,7 @@ var host = new HostBuilder()
     {
         string connectionString = hostContext.Configuration.GetConnectionString("SqlConnectionString");
         //services.AddSingleton<IDbConnection>(provider => new SqlConnection(connectionString));
+        services.AddSingleton(new ServiceBusMessageSender(hostContext.Configuration));
         services.AddSingleton(new DbConnectionFactory(connectionString));
         services.AddScoped<NotificationService>(); // Register the class directly without an interface
         services.AddScoped<INotificationRepository, NotificationRepository>(); 

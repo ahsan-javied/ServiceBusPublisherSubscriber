@@ -23,6 +23,11 @@ Project Details:
     
 	   b. Azure Function: Service Bus Trigger for S1, S2 and S3
 
+
+    10. Keyvault with Managed Identity
+         
+         
+
 2. Backend project in .Net 7 with C#
 	1. Microservices:
     

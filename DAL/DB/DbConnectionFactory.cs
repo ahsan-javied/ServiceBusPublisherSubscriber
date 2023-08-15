@@ -14,6 +14,6 @@ namespace DAL.DB
         public IDbConnection CreateConnection() => new SqlConnection(connectionString);
     }
 
-    
+
 
 }

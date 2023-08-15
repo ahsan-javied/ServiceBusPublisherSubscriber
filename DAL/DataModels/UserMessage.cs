@@ -1,10 +1,4 @@
-﻿using DAL.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace DAL.DataModels
 {
@@ -13,7 +7,7 @@ namespace DAL.DataModels
         public int MessageId { get; set; }
         public int SenderId { get; set; }
         public int ReceiverId { get; set; }
-        public string Content { get; set; } = string.Empty; 
+        public string Content { get; set; } = string.Empty;
         public bool IsDelivered { get; set; } = false;
         public DateTime? DeliveredDT { get; set; }
         public bool IsRead { get; set; } = false;
@@ -22,10 +16,10 @@ namespace DAL.DataModels
         public DateTime? PickAndLockDT { get; set; }
         public string? GroupSubscriptionName { get; set; }
 
-        
+
         public string ToJsonString()
         {
-           return JsonSerializer.Serialize(this);
+            return JsonSerializer.Serialize(this);
         }
     }
 }

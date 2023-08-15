@@ -1,5 +1,4 @@
-﻿using System.Data;
-using DAL.DataModels;
+﻿using DAL.DataModels;
 using DAL.DB;
 
 namespace DAL.Repository

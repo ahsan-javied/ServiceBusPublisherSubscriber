@@ -20,7 +20,7 @@ namespace SBTopicSubscriber
         //1. Default(Boolean) Filter: Default = true
         [Function("AllMessageSubscriber")]
         public async Task RunAsync(
-            [ServiceBusTrigger(topicName: "%SBTopicName%", subscriptionName: "%SBTopicSubscriptionName1%", Connection = "SBConnectionString")] string mySbMsg,
+            [ServiceBusTrigger("%SBTopicName%", "%SBTopicSubscriptionName1%", Connection = "SBConnectionString")] string mySbMsg,
             Int32 deliveryCount,
             DateTime enqueuedTimeUtc,
             string messageId
@@ -28,7 +28,7 @@ namespace SBTopicSubscriber
         {
             _logger.LogInformation($"START:AllMessageSubscriber {DateTime.UtcNow}");
             _logger.LogInformation($"processed message: {mySbMsg}");
-            
+
             try
             {
                 var notice = new Notification().ToClassObj(mySbMsg);
@@ -48,7 +48,5 @@ namespace SBTopicSubscriber
             }
             _logger.LogInformation($"END:AllMessageSubscriber {DateTime.UtcNow}");
         }
-
-
     }
 }

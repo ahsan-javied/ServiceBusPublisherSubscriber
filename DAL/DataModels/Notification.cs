@@ -1,10 +1,4 @@
-﻿using DAL.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace DAL.DataModels
 {
@@ -13,7 +7,7 @@ namespace DAL.DataModels
         public int Id { get; set; }
         public int UserId { get; set; }
         public int UserRoleTypeId { get; set; }
-        public string Title { get; set; } = string.Empty; 
+        public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime Timestamp { get; set; }
         public bool IsDelivered { get; set; } = false;
@@ -22,10 +16,10 @@ namespace DAL.DataModels
         public DateTime? ReadDT { get; set; }
         public bool PickAndLock { get; set; } = false;
         public DateTime? PickAndLockDT { get; set; }
-        
+
         public string ToJsonString()
         {
-           return JsonSerializer.Serialize(this);
+            return JsonSerializer.Serialize(this);
         }
 
         public Notification ToClassObj(string jsonData)

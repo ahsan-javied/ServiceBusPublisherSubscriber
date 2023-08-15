@@ -1,6 +1,5 @@
 using DAL.DataModels;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Services;
 using Services.ServiceBus;
@@ -13,9 +12,9 @@ namespace SendMessageToSBTopic
         private readonly ILogger _logger;
         private readonly NotificationService notificationService;
         private readonly ServiceBusMessageSender serviceBusMessageSender;
-        
+
         public SendMessageToSBTopic(
-            ILoggerFactory loggerFactory, 
+            ILoggerFactory loggerFactory,
             NotificationService noteService,
             ServiceBusMessageSender sbMessageSender)
         {
@@ -39,7 +38,8 @@ namespace SendMessageToSBTopic
             if (notifications.Any())
             {
                 notifications.
-                   ForEach(msg => {
+                   ForEach(msg =>
+                   {
                        msg.IsDelivered = false; msg.DeliveredDT = null;
                        msg.PickAndLock = true; msg.PickAndLockDT = DateTime.UtcNow;
                    });
@@ -49,7 +49,8 @@ namespace SendMessageToSBTopic
                 await serviceBusMessageSender.SendBatchMessagesAsync(notifications);
 
                 notifications.
-                    ForEach(msg => { 
+                    ForEach(msg =>
+                    {
                         msg.IsDelivered = msg.IsDelivered; msg.DeliveredDT = msg.DeliveredDT;
                         msg.PickAndLock = false; msg.PickAndLockDT = null;
                         msg.IsRead = false; msg.ReadDT = null;

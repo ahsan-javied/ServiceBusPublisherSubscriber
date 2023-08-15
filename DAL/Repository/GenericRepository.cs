@@ -6,7 +6,7 @@ namespace DAL.Repository
     public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private DbConnectionFactory dbConnectionFactory;
-        
+
         public GenericRepository(DbConnectionFactory dbConn)
         {
             dbConnectionFactory = dbConn;

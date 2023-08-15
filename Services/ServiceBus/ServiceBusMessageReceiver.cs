@@ -1,6 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 
 namespace Services.ServiceBus
 {
@@ -13,11 +12,11 @@ namespace Services.ServiceBus
 
         private void Initialize(IConfiguration config)
         {
-            sbConnectionString = config.GetSection("Values:SBConnectionString").Value ?? "";
-            topicName = config.GetSection("Values:SBTopicName").Value ?? "";
-            var subscriptionsName = config.GetSection("Values:SBTopicSubscriptions").Value ?? "";
+            sbConnectionString = config["SBConnectionString"] ?? "";
+            topicName = config["SBTopicName"] ?? "";
+            var subscriptionsName = config["SBTopicSubscriptions"] ?? "";
             Subscriptions = subscriptionsName?.Split(",") ?? Array.Empty<string>();
-            int.TryParse(config.GetSection("Values:SBMaxNumOfMessages").Value, out numOfMessages);
+            int.TryParse(config["SBMaxNumOfMessages"], out numOfMessages);
         }
 
         // the client that owns the connection and can be used to create senders and receivers

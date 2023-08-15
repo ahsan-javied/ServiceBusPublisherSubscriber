@@ -3,23 +3,24 @@ using DAL.DataModels;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using Utils.Enums;
+using Utils.Helpers;
 
 namespace Services.ServiceBus
 {
     public class ServiceBusMessageSender
     {
-        public ServiceBusMessageSender(IConfiguration config) 
+        public ServiceBusMessageSender(IConfiguration config)
         {
             Initialize(config);
         }
 
         private void Initialize(IConfiguration config)
         {
-            sbConnectionString = config.GetSection("Values:SBConnectionString").Value ?? "";
-            topicName = config.GetSection("Values:SBTopicName").Value ?? "";
-            var subscriptionsName = config.GetSection("Values:SBTopicSubscriptions").Value ?? "";
+            sbConnectionString = config["SBConnectionString"] ?? "";
+            topicName = config["SBTopicName"] ?? "";
+            var subscriptionsName = config["SBTopicSubscriptions"] ?? "";
             Subscriptions = subscriptionsName?.Split(",") ?? Array.Empty<string>();
-            int.TryParse(config.GetSection("Values:SBMaxNumOfMessages").Value, out numOfMessages);
+            int.TryParse(config["SBMaxNumOfMessages"], out numOfMessages);
         }
 
         // the client that owns the connection and can be used to create senders and receivers
@@ -51,7 +52,7 @@ namespace Services.ServiceBus
         //static string CustomField = "StoreId";
         static readonly int NrOfMessagesPerStore = 1; // Send at least 1.
 
-        
+
         // The Service Bus client types are safe to cache and use as a singleton for the lifetime
         // of the application, which is best practice when messages are being published or read
         // regularly.
@@ -64,20 +65,21 @@ namespace Services.ServiceBus
                 sender = client.CreateSender(topicName);
 
                 // create a batch 
-                List<List<Notification>> batches = new List<List<Notification>>(); // ListHelper.SplitIntoBatches(notifications, numOfMessages);
-            
+                List<List<Notification>> batches = ListHelper.SplitIntoBatches(notifications, numOfMessages);
+
                 foreach (var batch in batches)
                 {
                     using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
                     foreach (var message in batch)
                     {
+                        message.IsDelivered = true; message.DeliveredDT = DateTime.UtcNow;
                         var userRole = Enum.GetName(typeof(Enumerations.UserRole), message.UserRoleTypeId)?.ToLower();
                         var json = message.ToJsonString();
                         var sbMessage = new ServiceBusMessage(Encoding.UTF8.GetBytes(json))
                         {
                             MessageId = Guid.NewGuid().ToString(),
-                            ContentType= "application/json",
+                            ContentType = "application/json",
                             SessionId = message.UserId.ToString(),
                             //SQL Filter: role=admin & also for Correlation Filter
                             ApplicationProperties =
@@ -95,7 +97,8 @@ namespace Services.ServiceBus
                         {
                             message.PickAndLock = false;
                             message.PickAndLockDT = null;
-                            
+                            message.IsDelivered = false;
+                            message.DeliveredDT = null;
                             // if it is too large for the batch
                             Console.WriteLine($"The message {json} is too large to fit in the batch.");
                         }
@@ -108,7 +111,7 @@ namespace Services.ServiceBus
                         messageBatch.Dispose();
 
                         batch.Where(msg => msg.PickAndLock).ToList()
-                            .ForEach(msg => { msg.IsDelivered = true;  msg.DeliveredDT = DateTime.UtcNow; });
+                            .ForEach(msg => { msg.IsDelivered = true; msg.DeliveredDT = DateTime.UtcNow; });
                     }
                     catch (Exception ex)
                     {

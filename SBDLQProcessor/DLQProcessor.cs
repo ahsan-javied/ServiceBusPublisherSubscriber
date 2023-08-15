@@ -38,7 +38,7 @@ namespace SBDLQProcessor
                    {
                        string messageBody = Encoding.UTF8.GetString(msg.Body);
                        var notice = new Notification().ToClassObj(messageBody);
-                       
+
                        _logger.LogInformation($"Message from DLQ: {messageBody}");
 
                        if (notice?.Id > 0)
@@ -49,7 +49,8 @@ namespace SBDLQProcessor
                        }
                    });
 
-                await notificationService.BulkUpdateNotification(notifications);
+                if (notifications.Any())
+                    await notificationService.BulkUpdateNotification(notifications);
             }
 
             _logger.LogInformation($"END:S1 DLQProcessor {DateTime.UtcNow}");
